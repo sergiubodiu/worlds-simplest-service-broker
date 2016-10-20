@@ -41,6 +41,27 @@ worlds-simplest-service-broker
 
 Deploy to Cloud Foundry
 -----------------------
+latested PCFdev does not support go 1.7. if you see this message
+
+cf create-buildpack go_buildpack /Users/sergiu/Downloads/go_buildpack-cached-v1.7.13.zip
+
+```
+It looks like you're trying to use go 1.7.
+Unfortunately, that version of go is not supported by this buildpack.
+The versions of go supported in this buildpack are:
+- 1.6.3
+- 1.6.2
+- 1.5.4
+- 1.5.3
+If you need further help, start by reading: http://github.com/cloudfoundry/go-buildpack/releases.
+```
+you need to download the latest go buildpack from https://github.com/cloudfoundry/go-buildpack/releases/tag/v1.7.13 and update the buildpack on your environment
+
+```
+cf create-buildpack go_buildpack /Users/sergiu/Downloads/go_buildpack-cached-v1.7.13.zip 1
+```
+
+After troubleshooting the buildpack start deploying the application
 
 ```
 export SERVICE=myservice
@@ -61,6 +82,15 @@ To register the service broker (as an admin user):
 export SERVICE_URL=$(cf app $APPNAME | grep urls: | awk '{print $2}')
 cf create-service-broker $SERVICE admin admin https://$SERVICE_URL
 cf enable-service-access $SERVICE
+cf logs $APPNAME
+```
+
+To clean up the service
+
+```
+cf disable-service-access $SERVICE
+cf delete-service-broker $SERVICE -f
+cf delete $APPNAME -f
 ```
 
 To change the credentials being offered for bindings:
